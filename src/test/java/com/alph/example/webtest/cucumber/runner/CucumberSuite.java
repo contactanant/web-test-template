@@ -5,6 +5,6 @@ import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty"}, features = {"classpath:features"}, glue = {"com.alph.example.webtest.cucumber.steps"})
-public class RunCukesTest {
+@CucumberOptions(plugin = {"pretty", "html:build/cucumber-report"}, features = {"classpath:features"}, glue = {"com.alph.example.webtest.cucumber.steps"})
+public class CucumberSuite {
 }

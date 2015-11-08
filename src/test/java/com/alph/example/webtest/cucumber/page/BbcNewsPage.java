@@ -1,17 +1,27 @@
 package com.alph.example.webtest.cucumber.page;
 
-import org.openqa.selenium.WebDriver;
+import com.alph.example.webtest.selenium.WebDriverConfig;
+import cucumber.runtime.java.guice.ScenarioScoped;
+import org.openqa.selenium.By;
 
-public class BbcNewsPage implements Page {
+import javax.inject.Inject;
 
-    private WebDriver webDriver;
+@ScenarioScoped
+public class BbcNewsPage {
 
-    public BbcNewsPage(WebDriver webDriver) {
-        this.webDriver = webDriver;
+    private WebDriverConfig webDriverConfig;
+
+    @Inject
+    public BbcNewsPage(WebDriverConfig webDriverConfig) {
+        this.webDriverConfig = webDriverConfig;
     }
 
-    @Override
     public void search(String text) {
+        webDriverConfig.getWebDriver().findElement(By.id("orb-search-q")).sendKeys(text);
+        webDriverConfig.getWebDriver().findElement(By.id("orb-search-button")).click();
+    }
 
+    public void clickWorldMenu() {
+        webDriverConfig.getWebDriver().findElement(By.partialLinkText("World")).click();
     }
 }

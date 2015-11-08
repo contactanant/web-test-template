@@ -7,24 +7,31 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import java.util.concurrent.TimeUnit;
+
 import static java.lang.System.getenv;
 
+@Singleton
 public class WebDriverConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverConfig.class);
-    private WebDriver webDriver;
-    private WebDriverFactory webDriverFactory;
+    private final WebDriverFactory webDriverFactory;
     private final Thread DRIVER_SHUTDOWN_THREAD = shutdownThread();
+    private WebDriver webDriver;
 
-    public WebDriverConfig() {
+    @Inject
+    public WebDriverConfig(WebDriverFactory webDriverFactory) {
+        this.webDriverFactory = webDriverFactory;
         Runtime.getRuntime().addShutdownHook(DRIVER_SHUTDOWN_THREAD);
-        //TODO: dependency injection here
-        webDriverFactory = new WebDriverFactory();
     }
 
     public WebDriver getWebDriver() {
         if (webDriver == null) {
             webDriver = createWebDriverInstance();
+            webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         }
         return webDriver;
     }
@@ -45,7 +52,8 @@ public class WebDriverConfig {
         if (browser != null) {
             LOGGER.info("Setting browser as {}", browser);
         }
-        return browser != null ? BrowserType.valueOf(browser) : null;
+        BrowserType browserType;
+        return browser == null || ((browserType = BrowserType.valueOf(browser)) == null) ? BrowserType.PHANTOMJS : browserType;
     }
 
     private void clearCookies() {
@@ -79,9 +87,10 @@ public class WebDriverConfig {
             @Override
             public void run() {
                 try {
+                    LOGGER.info("quiting browser instance");
                     webDriver.quit();
                 } catch (Exception e) {
-                    System.out.println("Could not quit webDriver gracefully.");
+                    LOGGER.warn("Could not quit webDriver gracefully.");
                 }
             }
         };

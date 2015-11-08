@@ -19,14 +19,17 @@ public class WebDriverFactory {
     public static final int DEFAULT_BROWSER_HEIGHT = 1080;
 
     public WebDriver createWebDriver(BrowserType browser) {
-        switch(browser) {
+        if (browser == null) {
+            throw new IllegalArgumentException("Browser Type should be specified");
+        }
+        switch (browser) {
             case FIREFOX:
                 FirefoxProfile firefoxProfile = new FirefoxProfile();
                 FirefoxDriver webDriverFirefox = new FirefoxDriver(firefoxProfile);
                 resetBrowserWindowSize(webDriverFirefox);
                 return webDriverFirefox;
             case CHROME:
-                System.setProperty("webdriver.chrome.driver", "/Applications/chromedriver");
+                System.setProperty("webdriver.chrome.driver", "/usr/local/chromedriver");
                 DesiredCapabilities desiredCapabilitiesChrome = DesiredCapabilities.chrome();
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("start-maximized");

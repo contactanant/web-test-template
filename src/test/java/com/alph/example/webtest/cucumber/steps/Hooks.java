@@ -4,11 +4,19 @@ import com.alph.example.webtest.selenium.WebDriverConfig;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.runtime.java.guice.ScenarioScoped;
 
+import javax.inject.Inject;
+
+@ScenarioScoped
 public class Hooks {
 
-    //TODO: Instantiate webdriverConfig here
     WebDriverConfig webDriverConfig;
+
+    @Inject
+    public Hooks(WebDriverConfig webDriverConfig) {
+        this.webDriverConfig = webDriverConfig;
+    }
 
     @Before
     public void beforeScenario(Scenario scenario) {
