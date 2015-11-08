@@ -1,0 +1,66 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
+}
+
+task cukes() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'com.sciencedirect.sdfe.userjourney.steps']
+
+            if ( project.hasProperty("scenarioName") ) {
+                args += ['--name', scenarioName]
+
+            } else {
+                if ( project.hasProperty("tags") ) {
+                    args += ['--tags', tags]
+
+                } else {
+                    args += ['--tags', '~@ignore']
+                }
+            }
+
+            if ( project.hasProperty("featurePath") ) {
+                args <<= featurePath
+            }
+        }
+    }
+}
+
+task cucumber(type: Test, dependsOn: testClasses) {
+    include '**/CucumberSuite.*'
+}
+
+dependencies {
+
+    testCompile(
+            'info.cukes:cucumber-java8:1.2.2',
+            'info.cukes:cucumber-junit:1.2.2',
+            'junit:junit:4.12',
+            'org.seleniumhq.selenium:selenium-java:2.46.0',
+            'org.seleniumhq.selenium:selenium-htmlunit-driver:2.46.0',
+            'org.seleniumhq.selenium:selenium-firefox-driver:2.46.0',
+            'org.seleniumhq.selenium:selenium-support:2.46.0',
+            'ch.qos.logback:logback-classic:1.0.13',
+            'com.codeborne:phantomjsdriver:1.2.1'
+    )
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
