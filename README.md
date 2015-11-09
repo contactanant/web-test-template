@@ -20,19 +20,26 @@ Note the uses of @ScenarioScoped which keeps data separate for each scenario
 
 from project root 
 
-* ./gradlew clean test
+You can also execute cucumber test as a junit test
+* ./gradlew clean test  
+or 
+* mvn clean test
 
 you can supply a browser env variable like following (default browser is phantomjs)
 * TEST_BROWSER=FIREFOX ./gradlew cukes
 
 * ./gradlew cukes -PfeaturePath="src/test/resources/features"
 * ./gradlew cukes -PfeaturePath="src/test/resources/features/bbc.feature"
+ or
+* mvn clean test -Dcucumber.options="src/test/resources/features"
+* mvn clean test -Dcucumber.options="src/test/resources/features/bbc.feature"
 
 You can also select to run certain tags, or exclude them:
 * gradlew cukes -PfeaturePath="src/test/resources/features/features/bbc.feature" -Ptags="@RunThis"
 
-You can also execute test using CucumberSuite as a junit test
- * gradlew cucumber
+#Running test in parallel
+* mvn clean test -Pparallel
+* TODO : gradle test parallization
 
 ## Chrome Driver
 if you want to use chrome, download it from https://sites.google.com/a/chromium.org/chromedriver/downloads 
